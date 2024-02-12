@@ -1,3 +1,4 @@
+using CloudCostomers.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CloudCostomers.API.Controllers
@@ -6,9 +7,11 @@ namespace CloudCostomers.API.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
+        private readonly IUserService _userService;
 
-        public UsersController()
+        public UsersController(IUserService userService)
         {
+            _userService = userService;
         }
 
         [HttpGet(Name = "GetUsers")]

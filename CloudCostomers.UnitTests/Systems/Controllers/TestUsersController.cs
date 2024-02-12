@@ -1,6 +1,8 @@
 using CloudCostomers.API.Controllers;
+using CloudCostomers.Domain.Services;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 
 namespace CloudCostomers.UnitTests.Systems.Controllers
 {
@@ -10,7 +12,8 @@ namespace CloudCostomers.UnitTests.Systems.Controllers
         public async Task Get_OnSuccess_ReturnStatusCode200()
         {
             // Arrange
-            var sut = new UsersController();
+            var moqUserService = new Mock<IUserService>();
+            var sut = new UsersController(moqUserService.Object);
             // Act
             var result = (OkObjectResult)await sut.Get();
 
@@ -18,5 +21,19 @@ namespace CloudCostomers.UnitTests.Systems.Controllers
             result.StatusCode.Should().Be(200);
 
         }
+
+        [Fact]
+        public async Task Get_OnSuccess_InvokeUsersService()
+        {
+            // Arrange
+            var moqUserService = new Mock<IUserService>();
+            var sut = new UsersController( moqUserService.Object);
+            // Act
+            var result = (OkObjectResult)await sut.Get();
+
+            // Assert
+        }
+
+
     }
 }
