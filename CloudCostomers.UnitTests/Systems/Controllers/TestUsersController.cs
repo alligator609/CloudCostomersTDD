@@ -1,4 +1,5 @@
 using CloudCostomers.API.Controllers;
+using CloudCostomers.Domain.Models;
 using CloudCostomers.Domain.Services;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
@@ -23,15 +24,19 @@ namespace CloudCostomers.UnitTests.Systems.Controllers
         }
 
         [Fact]
-        public async Task Get_OnSuccess_InvokeUsersService()
+        public async Task Get_OnSuccess_InvokeUsersServiceExactlyOnce()
         {
             // Arrange
-            var moqUserService = new Mock<IUserService>();
-            var sut = new UsersController( moqUserService.Object);
+            var moqUsersService = new Mock<IUserService>();
+            moqUsersService.Setup(service => service.GetAllUsers()).ReturnsAsync(new List<User>());
+            var sut = new UsersController(moqUsersService.Object);
             // Act
-            var result = (OkObjectResult)await sut.Get();
-
+            var result = await sut.Get();
             // Assert
+            moqUsersService.Verify(
+                service => service.GetAllUsers(),
+                Times.Once
+                );
         }
 
 
