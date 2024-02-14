@@ -28,7 +28,20 @@ namespace CloudCostomers.UnitTests.Systems.Controllers
         {
             // Arrange
             var moqUsersService = new Mock<IUserService>();
-            moqUsersService.Setup(service => service.GetAllUsers()).ReturnsAsync(new List<User>());
+            moqUsersService.Setup(service => service.GetAllUsers()).ReturnsAsync(new List<User>()
+            { 
+                new User() {
+                    Id = 1,
+                    Name = "John Doe",
+                    Email = "jhon@mail.com",
+                    Address = new Address()
+                    {
+                        City = "New York",
+                        Street = "5th Avenue",
+                        ZipCode = "10001"
+                    }
+                }
+            });
             var sut = new UsersController(moqUsersService.Object);
             // Act
             var result = await sut.Get();
@@ -40,5 +53,17 @@ namespace CloudCostomers.UnitTests.Systems.Controllers
         }
 
 
+        [Fact]
+        public async Task Get_ONoUsersFoundReturn404()
+        {
+            // Arrange
+            var moqUsersService = new Mock<IUserService>();
+            moqUsersService.Setup(service => service.GetAllUsers()).ReturnsAsync(new List<User>());
+            var sut = new UsersController(moqUsersService.Object);
+            // Act
+            var result = await sut.Get();
+            // Assert
+            result.Should().BeOfType<NotFoundResult>();
+        }
     }
 }
