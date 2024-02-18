@@ -31,4 +31,5 @@ app.Run();
 static void ConfigureServices(IServiceCollection services)
 {
     services.AddTransient<IUserService, UserService>();
+    services.AddHttpClient<IUserService, UserService>();
 }

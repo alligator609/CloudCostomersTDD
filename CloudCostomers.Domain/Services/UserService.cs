@@ -8,8 +8,10 @@ namespace CloudCostomers.Domain.Services
     }
     public class UserService : IUserService
     {
-        public UserService()
+        private readonly HttpClient _httpClient;
+        public UserService(HttpClient httpClient)
         {
+            _httpClient = httpClient;
         }
 
         Task<List<User>> IUserService.GetAllUsers()

@@ -41,9 +41,8 @@ namespace CloudCostomers.UnitTests.Systems.Controllers
                 );
         }
 
-
         [Fact]
-        public async Task Get_ONoUsersFoundReturn404()
+        public async Task Get_OnSuccess_ReturnListOfUsers()
         {
             // Arrange
             var moqUsersService = new Mock<IUserService>();
@@ -52,7 +51,25 @@ namespace CloudCostomers.UnitTests.Systems.Controllers
             // Act
             var result = await sut.Get();
             // Assert
+            result.Should().BeOfType<OkObjectResult>();
+            var okResult = (OkObjectResult)result;
+            okResult.Value.Should().BeOfType<List<User>>();
+        }
+
+        [Fact]
+        public async Task Get_ONoUsersFoundReturn404()
+        {
+            // Arrange
+            var moqUsersService = new Mock<IUserService>();
+            moqUsersService.Setup(service => service.GetAllUsers()).ReturnsAsync(new List<User>());
+            var sut = new UsersController(moqUsersService.Object);
+            // Act
+            var result = await sut.Get();
+            // Assert
             result.Should().BeOfType<NotFoundResult>();
+
+            var notFoundResult = (NotFoundResult)result;
+            notFoundResult.StatusCode.Should().Be(404);
         }
     }
 }
