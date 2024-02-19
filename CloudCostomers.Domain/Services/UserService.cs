@@ -4,7 +4,7 @@ namespace CloudCostomers.Domain.Services
 {
     public interface IUserService
     {
-        public Task<List<User>> GetAllUsers();
+        Task<List<User>> GetAllUsers();
     }
     public class UserService : IUserService
     {
@@ -14,9 +14,12 @@ namespace CloudCostomers.Domain.Services
             _httpClient = httpClient;
         }
 
-        Task<List<User>> IUserService.GetAllUsers()
+        public async Task<List<User>> GetAllUsers()
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetAsync("https://jsonplaceholder.typicode.com/users");
+            response.EnsureSuccessStatusCode();
+            var users = new List<User>();
+            return users;
         }
     }
 }
