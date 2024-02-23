@@ -1,4 +1,5 @@
-﻿using CloudCostomers.Domain.Models;
+﻿using System.Net.Http.Json;
+using CloudCostomers.Domain.Models;
 
 namespace CloudCostomers.Domain.Services
 {
@@ -17,9 +18,14 @@ namespace CloudCostomers.Domain.Services
         public async Task<List<User>> GetAllUsers()
         {
             var response = await _httpClient.GetAsync("https://jsonplaceholder.typicode.com/users");
-            response.EnsureSuccessStatusCode();
-            var users = new List<User>();
-            return users;
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return new List<User>();
+            }
+            var responseContent = response.Content;
+            var allUsers = await responseContent.ReadFromJsonAsync<List<User>>();
+            return allUsers.ToList();
+            
         }
     }
 }
