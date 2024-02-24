@@ -1,3 +1,4 @@
+using CloudCostomers.Domain.Config;
 using CloudCostomers.Domain.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,8 +29,9 @@ app.MapControllers();
 app.Run();
 
 
-static void ConfigureServices(IServiceCollection services)
+ void ConfigureServices(IServiceCollection services)
 {
+    services.Configure<UserConfigOptions>(builder.Configuration.GetSection("UserConfigOptions"));
     services.AddTransient<IUserService, UserService>();
     services.AddHttpClient<IUserService, UserService>();
 }

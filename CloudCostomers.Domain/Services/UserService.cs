@@ -1,5 +1,7 @@
 ﻿using System.Net.Http.Json;
+using CloudCostomers.Domain.Config;
 using CloudCostomers.Domain.Models;
+using Microsoft.Extensions.Options;
 
 namespace CloudCostomers.Domain.Services
 {
@@ -10,14 +12,17 @@ namespace CloudCostomers.Domain.Services
     public class UserService : IUserService
     {
         private readonly HttpClient _httpClient;
-        public UserService(HttpClient httpClient)
+        private readonly UserConfigOptions _apiConfig;
+        public UserService(HttpClient httpClient,
+            IOptions<UserConfigOptions> apiconfig)
         {
             _httpClient = httpClient;
+            _apiConfig = apiconfig.Value;
         }
 
         public async Task<List<User>> GetAllUsers()
         {
-            var response = await _httpClient.GetAsync("https://jsonplaceholder.typicode.com/users");
+            var response = await _httpClient.GetAsync(_apiConfig.Endpoint);
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
                 return new List<User>();

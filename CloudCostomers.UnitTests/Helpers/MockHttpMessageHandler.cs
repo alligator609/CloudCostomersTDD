@@ -1,4 +1,7 @@
-﻿using Moq;
+﻿using CloudCostomers.Domain.Config;
+using CloudCostomers.Domain.Models;
+using Microsoft.Extensions.Options;
+using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 
@@ -18,19 +21,43 @@ namespace CloudCostomers.UnitTests.Helpers
             handlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
                     "SendAsync",
-                    ItExpr.IsAny<HttpRequestMessage>(), 
+                    ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>())
                     .ReturnsAsync(handler);
             return handlerMock;
         }
 
+        internal static Mock<HttpMessageHandler> SetupBasicGetResourceList(List<User> expectedResponse, string endpoint)
+        {
+
+            var mocResponse = new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(expectedResponse))
+            };
+            mocResponse.Content.Headers.ContentType =
+                new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+            var handlerMock = new Mock<HttpMessageHandler>();
+            var httpReq = new HttpRequestMessage()
+            {
+                RequestUri = new Uri(endpoint),
+                Method = HttpMethod.Get
+            };
+            handlerMock.Protected()
+                .Setup<Task<HttpResponseMessage>>(
+                    "SendAsync",
+                    httpReq,
+                    ItExpr.IsAny<CancellationToken>())
+                    .ReturnsAsync(mocResponse);
+            return handlerMock;
+        }
+
         internal static Mock<HttpMessageHandler> SetupReturn404()
         {
-            var handler = new HttpResponseMessage(System.Net.HttpStatusCode.NotFound)
+            var mocResponse = new HttpResponseMessage(System.Net.HttpStatusCode.NotFound)
             {
                 Content = new StringContent("")
             };
-            handler.Content.Headers.ContentType =
+            mocResponse.Content.Headers.ContentType =
                 new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
             var handlerMock = new Mock<HttpMessageHandler>();
             handlerMock.Protected()
@@ -38,7 +65,7 @@ namespace CloudCostomers.UnitTests.Helpers
                     "SendAsync",
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>())
-                    .ReturnsAsync(handler);
+                    .ReturnsAsync(mocResponse);
             return handlerMock;
         }
     }
