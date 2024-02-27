@@ -85,7 +85,7 @@ namespace CloudCostomers.UnitTests.Systems.Services
         public async Task GetAllUsers_WhenCalled_InvokesConfiguredExternalUrl()
         {
             //Arrange
-            var endpoint = "http://test.com/users";
+            var endpoint = "https://example.com/users";
             var config = Options.Create(
              new UserConfigOptions
              {

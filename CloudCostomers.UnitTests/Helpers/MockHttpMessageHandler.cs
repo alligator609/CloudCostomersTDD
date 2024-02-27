@@ -1,6 +1,4 @@
-﻿using CloudCostomers.Domain.Config;
-using CloudCostomers.Domain.Models;
-using Microsoft.Extensions.Options;
+﻿using CloudCostomers.Domain.Models;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
@@ -37,17 +35,17 @@ namespace CloudCostomers.UnitTests.Helpers
             mocResponse.Content.Headers.ContentType =
                 new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
             var handlerMock = new Mock<HttpMessageHandler>();
-            var httpReq = new HttpRequestMessage()
+            var httpRequest = new HttpRequestMessage()
             {
                 RequestUri = new Uri(endpoint),
                 Method = HttpMethod.Get
             };
             handlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    httpReq,
-                    ItExpr.IsAny<CancellationToken>())
-                    .ReturnsAsync(mocResponse);
+                "SendAsync",
+                 ItExpr.Is<HttpRequestMessage>(req => req.Method == HttpMethod.Get && req.RequestUri == httpRequest.RequestUri),
+                 ItExpr.IsAny<CancellationToken>())
+                 .ReturnsAsync(mocResponse);
             return handlerMock;
         }
 
